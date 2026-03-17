@@ -12,6 +12,11 @@ export class WinstonIntegration extends BaseIntegration {
   async run(ctx: IntegrationContext): Promise<void> {
     await this.scaffoldFile(ctx, 'logger.ts.tpl', 'src/lib/logger.ts');
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/logger.ts');
+  }
 }
 
 export default WinstonIntegration;

@@ -14,6 +14,13 @@ export class DockerIntegration extends BaseIntegration {
     await this.scaffoldFile(ctx, '.dockerignore.tpl', '.dockerignore');
     await this.scaffoldFile(ctx, 'docker-compose.yml.tpl', 'docker-compose.yml');
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'Dockerfile');
+    await this.removeFile(ctx.projectRoot, '.dockerignore');
+    await this.removeFile(ctx.projectRoot, 'docker-compose.yml');
+  }
 }
 
 export default DockerIntegration;

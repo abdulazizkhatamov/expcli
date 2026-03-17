@@ -71,3 +71,36 @@ export async function addPackages(
   const args = cmds.add(packages, dev);
   await runCommand(pm, args, cwd);
 }
+
+/**
+ * Uninstalls packages from the project.
+ *
+ * @param pm - The package manager to use.
+ * @param packages - The list of package names to remove.
+ * @param cwd - The working directory.
+ */
+export async function uninstallPackages(
+  pm: PackageManager,
+  packages: string[],
+  cwd: string,
+): Promise<void> {
+  if (packages.length === 0) return;
+
+  let uninstallCmd: string;
+  switch (pm) {
+    case 'npm':
+      uninstallCmd = 'uninstall';
+      break;
+    case 'yarn':
+      uninstallCmd = 'remove';
+      break;
+    case 'pnpm':
+      uninstallCmd = 'remove';
+      break;
+    case 'bun':
+      uninstallCmd = 'remove';
+      break;
+  }
+
+  await runCommand(pm, [uninstallCmd, ...packages], cwd);
+}

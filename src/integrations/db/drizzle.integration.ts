@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 import { select } from '@clack/prompts';
 import { BaseIntegration } from '../base.integration.js';
 import { readFile, writeFile, ensureDir } from '../../utils/fs.js';
-import { patchPackageJsonScripts } from '../../utils/patcher.js';
+import { patchPackageJsonScripts, revertPackageJsonScripts } from '../../utils/patcher.js';
 import { logger } from '../../utils/logger.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
@@ -84,6 +84,18 @@ export class DrizzleIntegration extends BaseIntegration {
     }
 
     await patchPackageJsonScripts(ctx.projectRoot, {
+      'db:generate': 'drizzle-kit generate',
+      'db:migrate': 'drizzle-kit migrate',
+      'db:studio': 'drizzle-kit studio',
+    });
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/db.ts');
+    await this.removeFile(ctx.projectRoot, 'drizzle.config.ts');
+
+    await revertPackageJsonScripts(ctx.projectRoot, {
       'db:generate': 'drizzle-kit generate',
       'db:migrate': 'drizzle-kit migrate',
       'db:studio': 'drizzle-kit studio',

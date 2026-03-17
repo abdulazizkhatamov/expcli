@@ -27,6 +27,12 @@ export class MongooseIntegration extends BaseIntegration {
       '  await connectDatabase();',
     );
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/mongoose.ts');
+    logger.info('Remember to remove MONGODB_URI from your .env file');
+  }
 }
 
 async function appendEnvVar(projectRoot: string, filename: string, line: string): Promise<void> {

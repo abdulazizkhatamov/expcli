@@ -92,6 +92,13 @@ export class PrismaIntegration extends BaseIntegration {
       logger.warn('Run "npx prisma generate" manually after installing dependencies.');
     }
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'prisma/schema.prisma');
+    await this.removeFile(ctx.projectRoot, 'src/lib/prisma.ts');
+    logger.info('Remember to remove DATABASE_URL from your .env file');
+  }
 }
 
 async function appendEnvVar(projectRoot: string, filename: string, line: string): Promise<void> {

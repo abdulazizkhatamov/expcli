@@ -1,5 +1,5 @@
 import { BaseIntegration } from '../base.integration.js';
-import { patchPackageJsonScripts } from '../../utils/patcher.js';
+import { patchPackageJsonScripts, revertPackageJsonScripts } from '../../utils/patcher.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
 export class VitestIntegration extends BaseIntegration {
@@ -16,6 +16,18 @@ export class VitestIntegration extends BaseIntegration {
     await this.scaffoldFile(ctx, 'app.test.ts.tpl', 'src/__tests__/app.test.ts');
 
     await patchPackageJsonScripts(ctx.projectRoot, {
+      test: 'vitest run',
+      'test:watch': 'vitest',
+      'test:cov': 'vitest run --coverage',
+    });
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'vitest.config.ts');
+    await this.removeFile(ctx.projectRoot, 'src/__tests__/app.test.ts');
+
+    await revertPackageJsonScripts(ctx.projectRoot, {
       test: 'vitest run',
       'test:watch': 'vitest',
       'test:cov': 'vitest run --coverage',

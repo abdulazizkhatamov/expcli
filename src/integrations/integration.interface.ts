@@ -20,4 +20,7 @@ export interface IIntegration {
 
   /** Install packages, scaffold files, patch existing files */
   run(ctx: IntegrationContext): Promise<void>;
+
+  /** Remove all traces of this integration from the project */
+  remove(ctx: IntegrationContext): Promise<void>;
 }

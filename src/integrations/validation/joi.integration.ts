@@ -12,6 +12,11 @@ export class JoiIntegration extends BaseIntegration {
   async run(ctx: IntegrationContext): Promise<void> {
     await this.scaffoldFile(ctx, 'validate.ts.tpl', 'src/lib/validate.ts');
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/validate.ts');
+  }
 }
 
 export default JoiIntegration;

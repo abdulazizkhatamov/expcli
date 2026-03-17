@@ -1,5 +1,5 @@
 import { BaseIntegration } from '../base.integration.js';
-import { patchPackageJsonScripts } from '../../utils/patcher.js';
+import { patchPackageJsonScripts, revertPackageJsonScripts } from '../../utils/patcher.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
 export class JestIntegration extends BaseIntegration {
@@ -16,6 +16,18 @@ export class JestIntegration extends BaseIntegration {
     await this.scaffoldFile(ctx, 'app.test.ts.tpl', 'src/__tests__/app.test.ts');
 
     await patchPackageJsonScripts(ctx.projectRoot, {
+      test: 'jest',
+      'test:watch': 'jest --watch',
+      'test:cov': 'jest --coverage',
+    });
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'jest.config.ts');
+    await this.removeFile(ctx.projectRoot, 'src/__tests__/app.test.ts');
+
+    await revertPackageJsonScripts(ctx.projectRoot, {
       test: 'jest',
       'test:watch': 'jest --watch',
       'test:cov': 'jest --coverage',

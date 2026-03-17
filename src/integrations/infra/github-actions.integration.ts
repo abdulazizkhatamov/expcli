@@ -1,7 +1,8 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fse from 'fs-extra';
 import { BaseIntegration } from '../base.integration.js';
-import { readFile, writeFile, ensureDir } from '../../utils/fs.js';
+import { readFile, writeFile, ensureDir, pathExists } from '../../utils/fs.js';
 import { logger } from '../../utils/logger.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
@@ -56,6 +57,31 @@ export class GithubActionsIntegration extends BaseIntegration {
 `;
         await writeFile(ciPath, ciContent.trimEnd() + testStep);
         logger.success('Added test step to CI workflow');
+      }
+    }
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, '.github/workflows/ci.yml');
+
+    // Clean up empty directories
+    const workflowsDir = path.join(ctx.projectRoot, '.github', 'workflows');
+    const githubDir = path.join(ctx.projectRoot, '.github');
+
+    if (await pathExists(workflowsDir)) {
+      const workflowsEntries = await fse.readdir(workflowsDir);
+      if (workflowsEntries.length === 0) {
+        await fse.remove(workflowsDir);
+        logger.success('Removed .github/workflows/');
+      }
+    }
+
+    if (await pathExists(githubDir)) {
+      const githubEntries = await fse.readdir(githubDir);
+      if (githubEntries.length === 0) {
+        await fse.remove(githubDir);
+        logger.success('Removed .github/');
       }
     }
   }

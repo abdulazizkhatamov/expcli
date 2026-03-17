@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 import { select } from '@clack/prompts';
 import { BaseIntegration } from '../base.integration.js';
 import { readFile, writeFile, ensureDir } from '../../utils/fs.js';
-import { patchTsConfig } from '../../utils/patcher.js';
+import { patchTsConfig, revertTsConfigKeys } from '../../utils/patcher.js';
 import { logger } from '../../utils/logger.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
@@ -64,6 +64,12 @@ export class TypeOrmIntegration extends BaseIntegration {
       experimentalDecorators: true,
       emitDecoratorMetadata: true,
     });
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/data-source.ts');
+    await revertTsConfigKeys(ctx.projectRoot, ['experimentalDecorators', 'emitDecoratorMetadata']);
   }
 }
 

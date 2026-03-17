@@ -27,6 +27,26 @@ export class PinoIntegration extends BaseIntegration {
       },
     ]);
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/logger.ts');
+
+    const appFile = `${ctx.projectRoot}/src/app.ts`;
+
+    await this.revertPatches(ctx, [
+      {
+        file: appFile,
+        anchor: '@expcli:imports',
+        code: `import pinoHttp from 'pino-http';\nimport { logger } from './lib/logger.js';`,
+      },
+      {
+        file: appFile,
+        anchor: '@expcli:middleware',
+        code: `app.use(pinoHttp({ logger }));`,
+      },
+    ]);
+  }
 }
 
 export default PinoIntegration;

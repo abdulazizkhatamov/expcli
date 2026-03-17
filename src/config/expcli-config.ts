@@ -126,6 +126,22 @@ export async function addIntegration(
 }
 
 /**
+ * Removes an integration entry from expcli.json by name.
+ * No-ops if the integration is not found.
+ */
+export async function removeIntegration(name: string, cwd?: string): Promise<void> {
+  const config = await readConfig(cwd);
+  const index = config.integrations.findIndex((i: IntegrationEntry) => i.name === name);
+
+  if (index === -1) {
+    return;
+  }
+
+  config.integrations.splice(index, 1);
+  await writeConfig(config, cwd);
+}
+
+/**
  * Returns true if an integration with the given name is registered.
  */
 export async function hasIntegration(name: string, cwd?: string): Promise<boolean> {

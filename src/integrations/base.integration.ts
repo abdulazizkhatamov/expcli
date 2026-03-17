@@ -1,8 +1,10 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { readFile, writeFile, ensureDir } from '../utils/fs.js';
-import { applyPatches } from '../utils/patcher.js';
+import fse from 'fs-extra';
+import { readFile, writeFile, ensureDir, pathExists } from '../utils/fs.js';
+import { applyPatches, removePatches } from '../utils/patcher.js';
 import { logger } from '../utils/logger.js';
+import { uninstallPackages } from '../pm/runner.js';
 import type { IIntegration, IntegrationContext } from './integration.interface.js';
 import type { PatchOperation } from '../utils/patcher.js';
 
@@ -47,6 +49,17 @@ export abstract class BaseIntegration implements IIntegration {
   abstract run(ctx: IntegrationContext): Promise<void>;
 
   /**
+   * Default remove implementation: uninstalls packages only.
+   * Integrations with scaffolded files or patches must override this method.
+   */
+  async remove(ctx: IntegrationContext): Promise<void> {
+    const allPackages = [...this.packages.prod, ...this.packages.dev];
+    if (allPackages.length > 0) {
+      await uninstallPackages(ctx.pm, allPackages, ctx.projectRoot);
+    }
+  }
+
+  /**
    * Renders a template from templates/partials/<name>/<filename>
    * and writes it to projectRoot/destRelPath.
    * Creates parent directories as needed.
@@ -69,6 +82,36 @@ export abstract class BaseIntegration implements IIntegration {
     await writeFile(destPath, content);
 
     logger.success(`Scaffolded ${destRelPath}`);
+  }
+
+  /**
+   * Removes a file from the project if it exists.
+   */
+  protected async removeFile(projectRoot: string, relPath: string): Promise<void> {
+    const fullPath = path.join(projectRoot, relPath);
+    if (await pathExists(fullPath)) {
+      await fse.remove(fullPath);
+      logger.success(`Removed ${relPath}`);
+    }
+  }
+
+  /**
+   * Reverts patch operations and logs results.
+   */
+  protected async revertPatches(ctx: IntegrationContext, ops: PatchOperation[]): Promise<void> {
+    const resolvedOps = ops.map((op) => ({
+      ...op,
+      file: path.isAbsolute(op.file) ? op.file : path.join(ctx.projectRoot, op.file),
+    }));
+
+    const results = await removePatches(resolvedOps);
+
+    for (const result of results) {
+      const relFile = path.relative(ctx.projectRoot, result.file);
+      if (result.success && result.reason !== 'not_found') {
+        logger.success(`Reverted patch in ${relFile}`);
+      }
+    }
   }
 
   /**

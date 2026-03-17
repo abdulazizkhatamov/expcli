@@ -44,6 +44,26 @@ export class PassportIntegration extends BaseIntegration {
       },
     ]);
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/passport.ts');
+
+    const appFile = `${ctx.projectRoot}/src/app.ts`;
+
+    await this.revertPatches(ctx, [
+      {
+        file: appFile,
+        anchor: '@expcli:imports',
+        code: `import { passport } from './lib/passport.js';`,
+      },
+      {
+        file: appFile,
+        anchor: '@expcli:middleware',
+        code: `app.use(passport.initialize());`,
+      },
+    ]);
+  }
 }
 
 export default PassportIntegration;

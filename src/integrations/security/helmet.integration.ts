@@ -25,6 +25,25 @@ export class HelmetIntegration extends BaseIntegration {
       },
     ]);
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+
+    const appFile = `${ctx.projectRoot}/src/app.ts`;
+
+    await this.revertPatches(ctx, [
+      {
+        file: appFile,
+        anchor: '@expcli:imports',
+        code: `import helmet from 'helmet';`,
+      },
+      {
+        file: appFile,
+        anchor: '@expcli:middleware',
+        code: `app.use(helmet());`,
+      },
+    ]);
+  }
 }
 
 export default HelmetIntegration;

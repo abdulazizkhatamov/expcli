@@ -27,6 +27,26 @@ export class SwaggerIntegration extends BaseIntegration {
       },
     ]);
   }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/docs/swagger.ts');
+
+    const appFile = `${ctx.projectRoot}/src/app.ts`;
+
+    await this.revertPatches(ctx, [
+      {
+        file: appFile,
+        anchor: '@expcli:imports',
+        code: `import { swaggerUi, swaggerSpec } from './docs/swagger.js';`,
+      },
+      {
+        file: appFile,
+        anchor: '@expcli:routes',
+        code: `app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));`,
+      },
+    ]);
+  }
 }
 
 export default SwaggerIntegration;

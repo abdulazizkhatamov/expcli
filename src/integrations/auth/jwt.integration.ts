@@ -1,6 +1,7 @@
 import path from 'path';
 import { BaseIntegration } from '../base.integration.js';
 import { pathExists, writeFile, readFile } from '../../utils/fs.js';
+import { logger } from '../../utils/logger.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
 export class JwtIntegration extends BaseIntegration {
@@ -19,6 +20,13 @@ export class JwtIntegration extends BaseIntegration {
     await appendEnvVar(ctx.projectRoot, '.env', 'JWT_EXPIRES_IN=7d');
     await appendEnvVar(ctx.projectRoot, '.env.example', 'JWT_SECRET=change-me');
     await appendEnvVar(ctx.projectRoot, '.env.example', 'JWT_EXPIRES_IN=7d');
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/jwt.ts');
+    await this.removeFile(ctx.projectRoot, 'src/common/guards/jwt.guard.ts');
+    logger.info('Remember to remove JWT_SECRET and JWT_EXPIRES_IN from your .env file');
   }
 }
 

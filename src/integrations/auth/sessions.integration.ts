@@ -1,6 +1,7 @@
 import path from 'path';
 import { BaseIntegration } from '../base.integration.js';
 import { pathExists, writeFile, readFile } from '../../utils/fs.js';
+import { logger } from '../../utils/logger.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
 export class SessionsIntegration extends BaseIntegration {
@@ -30,6 +31,28 @@ export class SessionsIntegration extends BaseIntegration {
     ]);
 
     await appendEnvVar(ctx.projectRoot, '.env', 'SESSION_SECRET=change-me');
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/session.ts');
+
+    const appFile = `${ctx.projectRoot}/src/app.ts`;
+
+    await this.revertPatches(ctx, [
+      {
+        file: appFile,
+        anchor: '@expcli:imports',
+        code: `import { sessionMiddleware } from './lib/session.js';`,
+      },
+      {
+        file: appFile,
+        anchor: '@expcli:middleware',
+        code: `app.use(sessionMiddleware);`,
+      },
+    ]);
+
+    logger.info('Remember to remove SESSION_SECRET from your .env file');
   }
 }
 

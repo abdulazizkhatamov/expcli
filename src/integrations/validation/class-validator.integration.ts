@@ -1,5 +1,5 @@
 import { BaseIntegration } from '../base.integration.js';
-import { patchTsConfig } from '../../utils/patcher.js';
+import { patchTsConfig, revertTsConfigKeys } from '../../utils/patcher.js';
 import type { IntegrationContext } from '../integration.interface.js';
 
 export class ClassValidatorIntegration extends BaseIntegration {
@@ -17,6 +17,12 @@ export class ClassValidatorIntegration extends BaseIntegration {
       experimentalDecorators: true,
       emitDecoratorMetadata: true,
     });
+  }
+
+  async remove(ctx: IntegrationContext): Promise<void> {
+    await super.remove(ctx);
+    await this.removeFile(ctx.projectRoot, 'src/lib/validate.ts');
+    await revertTsConfigKeys(ctx.projectRoot, ['experimentalDecorators', 'emitDecoratorMetadata']);
   }
 }
 
