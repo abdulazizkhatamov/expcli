@@ -5,7 +5,7 @@ The CLI for building Express + TypeScript projects.
 Scaffold projects, generate modules, and add integrations — all from the terminal.
 
 ```bash
-npx expcli new my-api
+npx expcli-ts new my-api
 ```
 
 ---
@@ -21,7 +21,7 @@ npx expcli new my-api
 
 **Use without installing (recommended to start):**
 ```bash
-npx expcli <command>
+npx expcli-ts <command>
 ```
 
 **Install globally:**
@@ -55,7 +55,7 @@ npm run dev
 | `expcli add <integration>` | Add an integration |
 | `expcli build` | Compile with tsup |
 | `expcli start` | Run compiled app |
-| `expcli start:dev` | Dev server with hot reload |
+| `expcli start-dev` | Dev server with hot reload |
 | `expcli info` | Show project and system info |
 | `expcli list` | List all schematics and integrations |
 
@@ -162,6 +162,7 @@ expcli g <schematic> <name>
 | `guard` | `gu` | Route guard middleware |
 | `exception-filter` | `ef` | Error handler (4-argument) |
 | `pipe` | `p` | Body transform/validate middleware |
+| `spec` | `sp` | Supertest spec file for a module |
 
 ### Examples
 
@@ -319,14 +320,12 @@ expcli start [options]
 
 ---
 
-## `expcli start:dev`
+## `expcli start-dev`
 
 Start the app in watch mode using [tsx](https://github.com/privatenumber/tsx).
 
 ```bash
-expcli start:dev [options]
-# Alias
-expcli start-dev
+expcli start-dev [options]
 ```
 
 | Option | Description |
