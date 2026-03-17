@@ -26,7 +26,7 @@ npx expcli <command>
 
 **Install globally:**
 ```bash
-npm install -g expcli
+npm install -g expcli-ts
 ```
 
 ---

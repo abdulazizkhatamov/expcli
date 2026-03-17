@@ -14,7 +14,7 @@ function getVersion(): string {
       const pkgPath = path.resolve(currentDir, rel);
       try {
         const pkg = _require(pkgPath) as { name?: string; version: string };
-        if (pkg.name === 'expcli') return pkg.version;
+        if (pkg.name === 'expcli-ts') return pkg.version;
       } catch {
         // try next
       }

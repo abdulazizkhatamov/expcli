@@ -1,11 +1,11 @@
 {
-  "name": "expcli",
+  "name": "expcli-ts",
   "version": "0.1.0",
   "description": "The CLI for building Express + TypeScript projects",
   "type": "module",
   "bin": { "expcli": "bin/expcli.js" },
   "files": ["dist/", "bin/"],
-  "keywords": ["express", "typescript", "cli", "scaffold", "generator", "expcli"],
+  "keywords": ["express", "typescript", "cli", "scaffold", "generator", "expcli", "expcli-ts"],
   "license": "MIT",
   "repository": {
     "type": "git",
