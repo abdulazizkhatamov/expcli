@@ -1,0 +1,7 @@
+src/
+templates/
+tsconfig.json
+tsup.config.ts
+.gitignore
+*.test.ts
+coverage/

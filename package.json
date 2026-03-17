@@ -1,0 +1,38 @@
+{
+  "name": "expcli",
+  "version": "0.1.0",
+  "description": "The CLI for building Express + TypeScript projects",
+  "type": "module",
+  "bin": { "expcli": "bin/expcli.js" },
+  "files": ["dist/", "bin/"],
+  "keywords": ["express", "typescript", "cli", "scaffold", "generator", "expcli"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "engines": { "node": ">=18.0.0" },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "start": "node bin/expcli.js",
+    "test": "vitest run",
+    "lint": "eslint src",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "execa": "^9.4.0",
+    "fs-extra": "^11.2.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}
