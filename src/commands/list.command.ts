@@ -27,6 +27,7 @@ const SCHEMATICS: SchematicEntry[] = [
   { name: 'guard',            alias: 'gu',  description: 'Route guard middleware' },
   { name: 'exception-filter', alias: 'ef',  description: 'Express error handler (4-argument)' },
   { name: 'pipe',             alias: 'p',   description: 'Request body transform/validate middleware' },
+  { name: 'spec',             alias: 'sp',  description: 'Supertest spec file for a module' },
 ];
 
 // ─── Integration definitions ──────────────────────────────────────────────────

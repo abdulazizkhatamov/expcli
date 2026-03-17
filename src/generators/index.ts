@@ -13,6 +13,7 @@ export const GENERATOR_ALIASES: Record<string, string> = {
   'exception-filter': 'exception-filter', 'ef': 'exception-filter',
   'pipe': 'pipe',             'p': 'pipe',
   'module': 'module',         'mod': 'module',
+  'spec': 'spec',             'sp': 'spec',
 };
 
 export async function createGenerator(type: string): Promise<IGenerator> {
@@ -61,6 +62,10 @@ export async function createGenerator(type: string): Promise<IGenerator> {
     case 'module': {
       const { ModuleGenerator } = await import('./module.generator.js');
       return new ModuleGenerator();
+    }
+    case 'spec': {
+      const { SpecGenerator } = await import('./spec.generator.js');
+      return new SpecGenerator();
     }
     default:
       throw new Error(`No generator implemented for type: "${resolved}"`);
