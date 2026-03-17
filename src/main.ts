@@ -8,6 +8,7 @@ import { registerStartDevCommand } from './commands/start-dev.command.js';
 import { registerAddCommand } from './commands/add.command.js';
 import { registerListCommand } from './commands/list.command.js';
 import { registerRemoveCommand } from './commands/remove.command.js';
+import { registerUpdateCommand } from './commands/update.command.js';
 import { logger } from './utils/logger.js';
 
 // Register all commands
@@ -20,6 +21,7 @@ registerStartDevCommand(program);
 registerAddCommand(program);
 registerListCommand(program);
 registerRemoveCommand(program);
+registerUpdateCommand(program);
 
 // Parse and dispatch
 program.parseAsync(process.argv).catch((err: unknown) => {
